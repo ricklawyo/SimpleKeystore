@@ -4,6 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    tools:context="com.sample.foo.simplekeystoreapp.MainActivity">
+    tools:context="com.sample.mishaki.simplekeystoreapp.MainActivity">
 
 </ListView>
