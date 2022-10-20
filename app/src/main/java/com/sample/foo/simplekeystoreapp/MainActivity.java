@@ -25,6 +25,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
@@ -42,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
 
     static final String TAG = "SimpleKeystoreApp";
     static final String CIPHER_TYPE = "RSA/ECB/PKCS1Padding";
-    static final String CIPHER_PROVIDER = "AndroidOpenSSL";
 
     EditText aliasText;
     EditText startText, decryptedText, encryptedText;
@@ -56,10 +56,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
+            // connect to the KeyStore on the device
             keyStore = KeyStore.getInstance("AndroidKeyStore");
             keyStore.load(null);
         }
         catch(Exception e) {}
+
+        //
         refreshKeys();
 
         setContentView(R.layout.activity_main);
@@ -155,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
-            Cipher inCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding", "AndroidOpenSSL");
+            Cipher inCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             inCipher.init(Cipher.ENCRYPT_MODE, publicKey);
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -175,10 +178,9 @@ public class MainActivity extends AppCompatActivity {
     public void decryptString(String alias) {
         try {
             KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)keyStore.getEntry(alias, null);
-            RSAPrivateKey privateKey = (RSAPrivateKey) privateKeyEntry.getPrivateKey();
 
-            Cipher output = Cipher.getInstance("RSA/ECB/PKCS1Padding", "AndroidOpenSSL");
-            output.init(Cipher.DECRYPT_MODE, privateKey);
+            Cipher output = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+            output.init(Cipher.DECRYPT_MODE, privateKeyEntry.getPrivateKey());
 
             String cipherText = encryptedText.getText().toString();
             CipherInputStream cipherInputStream = new CipherInputStream(
