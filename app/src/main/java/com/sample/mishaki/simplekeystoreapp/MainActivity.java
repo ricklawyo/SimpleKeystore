@@ -53,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     KeyStore keyStore;
     SharedPreferences sharedPref;
 
+    // sets up the inital state of the main activity
+    // including setting up the listview and listview adapter
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,20 +92,8 @@ public class MainActivity extends AppCompatActivity {
         listView.setAdapter(listAdapter);
     }
 
-    private void savePassword(String userName, String password)
-    {
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(userName,password);
-        editor.apply();
-
-    }
-
-    private boolean checkPassword(String userName, String password)
-    {
-        SharedPreferences.Editor editor = sharedPref.edit();
-
-        return true;
-    }
+    // refreshes the ArrayList of strings that has the userIDs
+    // from the keystore
     private void refreshKeys() {
         // create a new ArrayList of strings
         userIDsInKeystore = new ArrayList<>();
@@ -121,6 +111,9 @@ public class MainActivity extends AppCompatActivity {
             listAdapter.notifyDataSetChanged();
     }
 
+    // creates a new entry in the Keystore using the userID as the
+    //  alias or key and then creates and stores public/private
+    //  key info
     public void createNewKeys(View view) {
         String userID = userIDText.getText().toString();
         try {
@@ -203,7 +196,10 @@ public class MainActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    // encrypts the passed in string and
+    // encrypts the passed in string using the PUBLIC key
+    // in the keystore associated with the userID
+    //
+    // returns the encrypted string
     public String encryptString(String userID, String pw) {
         try {
 
@@ -254,6 +250,10 @@ public class MainActivity extends AppCompatActivity {
         return "";
     }
 
+    // decrypts the passed in string using the PRIVATE key
+    // in the keystore associated with the userID
+    //
+    // returns the encrypted string
     public String decryptString(String userID, String encryptPW) {
         try {
             KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry)keyStore.getEntry(userID, null);
@@ -286,6 +286,8 @@ public class MainActivity extends AppCompatActivity {
         return "";
     }
 
+    // the ArrayAdapter class that deals with populating the
+    //  listview in the mail layout
     public class KeyRecyclerAdapter extends ArrayAdapter<String> {
 
         public KeyRecyclerAdapter(Context context, int textView) {
