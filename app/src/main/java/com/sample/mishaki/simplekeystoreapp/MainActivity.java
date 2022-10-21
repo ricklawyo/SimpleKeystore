@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     List<String> userIDsInKeystore;
     ListView listView;
     KeyRecyclerAdapter listAdapter;
-
+    CheckBox cbCorrectPW;
     KeyStore keyStore;
     SharedPreferences sharedPref;
 
@@ -85,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
         pwText = (EditText) listHeader.findViewById(R.id.pwText);
         decryptedText = (EditText) listHeader.findViewById(R.id.decryptedText);
         encryptedText = (EditText) listHeader.findViewById(R.id.encryptedText);
+        cbCorrectPW = (CheckBox) listHeader.findViewById(R.id.correct);
+
 
         listView = (ListView) findViewById(R.id.listView);
         listView.addHeaderView(listHeader);
@@ -159,6 +162,32 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, Log.getStackTraceString(e));
         }
         refreshKeys();
+    }
+
+    public void testPassword(View view) {
+        cbCorrectPW.setChecked(isCorrectPW());
+    }
+
+    private boolean isCorrectPW() {
+        String userID = userIDText.getText().toString();
+        try {
+            // Create new key if needed
+            if (!keyStore.containsAlias(userID)) {
+                Toast.makeText(this, "Canbnot find user name:  " + userID, Toast.LENGTH_LONG).show();
+            } else {
+                // get the encrypted text from preferences for this userID
+                SharedPreferences.Editor editor = sharedPref.edit();
+                String encryptPW = sharedPref.getString(userID,"");
+                editor.apply();
+
+                // decrypt it and compare it with the current password
+                return decryptString(userID, encryptPW).equals(pwText.getText().toString());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     // deletes a key/user from the keystore if it is there...

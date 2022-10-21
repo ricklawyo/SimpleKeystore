@@ -33,6 +33,23 @@
         android:layout_alignParentRight="true"
         android:text="Store ID/Password pair"
         android:onClick="createNewKeys" />
+    <Button
+        android:id="@+id/testPW"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_toLeftOf="@id/generateKeyPair"
+        android:layout_below="@id/pwText"
+        android:text="Test Password"
+        android:onClick="testPassword" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/testPW"
+        android:id="@+id/correct"
+        android:text="Correct Password"/>
 
 
 </RelativeLayout>
